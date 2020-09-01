@@ -14,7 +14,7 @@ library(dplyr)
 
 preg <- system.file("preg.xlsx", package = "dmtools")
 table <- readxl::read_xlsx(preg)
-kable(table, caption = "preg")
+kable(table, caption = "LB")
 
 ## ----preg_dataset, echo = FALSE, result = 'asis'------------------------------
 
@@ -36,7 +36,7 @@ kable(df, caption = "dataset")
 
 ## ----preg---------------------------------------------------------------------
 preg <- system.file("preg.xlsx", package = "dmtools")
-obj_short <- short(preg, id, "res", c("site", "sex"))
+obj_short <- short(preg, id, "LBORRES", c("site", "sex"))
 
 obj_short <- obj_short %>% check(df)
 obj_short %>% get_result()
@@ -44,7 +44,7 @@ obj_short %>% get_result()
 ## ----drug_table, echo = FALSE, result = 'asis', warning = FALSE, message = FALSE----
 drug <- system.file("drug.xlsx", package = "dmtools")
 table <- readxl::read_xlsx(drug)
-kable(table, caption = "drug")
+kable(table, caption = "CM")
 
 ## ----drug_dataset, echo = FALSE, result = 'asis'------------------------------
 
@@ -63,7 +63,7 @@ kable(df, caption = "dataset")
 
 ## ----drug---------------------------------------------------------------------
 drug <- system.file("drug.xlsx", package = "dmtools")
-obj_short <- short(drug, id, "type")
+obj_short <- short(drug, id, "CMTRT")
 
 obj_short <- obj_short %>% check(df)
 obj_short %>% get_result()
@@ -71,7 +71,7 @@ obj_short %>% get_result()
 ## ----vf_table, echo = FALSE, result = 'asis', warning = FALSE, message = FALSE----
 vf <- system.file("vf.xlsx", package = "dmtools")
 table <- readxl::read_xlsx(vf)
-kable(table, caption = "vf")
+kable(table, caption = "VS")
 
 ## ----vf_dataset, echo = FALSE, result = 'asis'--------------------------------
 
@@ -90,7 +90,7 @@ kable(df, caption = "dataset")
 
 ## ----vf-----------------------------------------------------------------------
 vf <- system.file("vf.xlsx", package = "dmtools")
-obj_short <- short(vf, id, "heart")
+obj_short <- short(vf, id, "VSTEST_HR")
 
 obj_short <- obj_short %>% check(df)
 obj_short %>% get_result()
@@ -98,7 +98,7 @@ obj_short %>% get_result()
 ## ----ae_table, echo = FALSE, result = 'asis', warning = FALSE, message = FALSE----
 ae <- system.file("ae.xlsx", package = "dmtools")
 table <- readxl::read_xlsx(ae)
-kable(table, caption = "ae")
+kable(table, caption = "AE")
 
 ## ----ae_dataset, echo = FALSE, result = 'asis'--------------------------------
 
@@ -122,7 +122,7 @@ kable(df, caption = "dataset")
 
 ## ----ae-----------------------------------------------------------------------
 ae <- system.file("ae.xlsx", package = "dmtools")
-obj_short <- short(ae, id, "is_norm", common_cols = c("ae_yn_e5", "ae_desc_e5"), extra = "human_name")
+obj_short <- short(ae, id, "LBNRIND", common_cols = c("ae_yn_e5", "ae_desc_e5"), extra = "LBTEST")
 
 obj_short <- obj_short %>% check(df)
 obj_short %>% get_result()

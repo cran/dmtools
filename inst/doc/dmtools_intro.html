@@ -18,9 +18,9 @@
 
 <style type="text/css">code{white-space: pre;}</style>
 <style type="text/css" data-origin="pandoc">
-a.sourceLine { display: inline-block; line-height: 1.25; }
-a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
-a.sourceLine:empty { height: 1.2em; }
+code.sourceCode > span { display: inline-block; line-height: 1.25; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+code.sourceCode > span:empty { height: 1.2em; }
 .sourceCode { overflow: visible; }
 code.sourceCode { white-space: pre; position: relative; }
 div.sourceCode { margin: 1em 0; }
@@ -30,14 +30,16 @@ div.sourceCode { overflow: auto; }
 }
 @media print {
 code.sourceCode { white-space: pre-wrap; }
-a.sourceLine { text-indent: -1em; padding-left: 1em; }
+code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
 }
-pre.numberSource a.sourceLine
-  { position: relative; left: -4em; }
-pre.numberSource a.sourceLine::before
-  { content: attr(title);
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
     position: relative; left: -1em; text-align: right; vertical-align: baseline;
-    border: none; pointer-events: all; display: inline-block;
+    border: none; display: inline-block;
     -webkit-touch-callout: none; -webkit-user-select: none;
     -khtml-user-select: none; -moz-user-select: none;
     -ms-user-select: none; user-select: none;
@@ -46,9 +48,9 @@ pre.numberSource a.sourceLine::before
   }
 pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
 div.sourceCode
-  {  }
+  {   }
 @media screen {
-a.sourceLine::before { text-decoration: underline; }
+code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
 code span.al { color: #ff0000; font-weight: bold; } /* Alert */
 code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
@@ -303,15 +305,14 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 
 <div id="installation" class="section level2">
 <h2>Installation</h2>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" title="1"><span class="kw">library</span>(dmtools)</a></code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a><span class="kw">library</span>(dmtools)</span></code></pre></div>
 </div>
 <div id="overview" class="section level2">
 <h2>Overview</h2>
-<p>For checking the dataset from EDC in clinical trials. Notice, your dataset should have a postfix( _post ) or a prefix( pre_ ) in the names of variables. Column names should be unique.</p>
+<p>For checking the dataset from EDC in clinical trials. Notice, your dataset should have a postfix( _v1 ) or a prefix( v1_ ) in the names of variables. Column names should be unique.</p>
 <ul>
 <li>laboratory - Does the investigator correctly estimate the laboratory analyzes?</li>
 <li>dates - Do all dates correspond to the protocol’s timeline?</li>
-<li>WBCs count - Do absolute equal (all * relative) / 100?</li>
 <li>sites - If the clinical trial has different lab reference ranges.</li>
 </ul>
 </div>
@@ -321,28 +322,28 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <h3>laboratory</h3>
 <p>For laboratory check, you need to create the excel table like in the example.</p>
 <ul>
-<li>age_min - whole number, &gt;= number</li>
-<li>age_max - if none, type Inf, &lt;= number<br />
+<li>AGELOW - number, &gt;= number</li>
+<li>AGEHIGH - if none, type Inf, &lt;= number<br />
 </li>
-<li>sex - for both sex, use <code>|</code></li>
-<li>human_name - friendly name for analysis</li>
-<li>name_lab_vals - analysis from the dataset, without postfix or prefix</li>
-<li>name_is_norm - estimate from the dataset, without postfix or prefix</li>
-<li>lab_vals_min - lower limit of normal, &gt;=</li>
-<li>lab_vals_max - upper limit of normal, &lt;=</li>
+<li>SEX - for both sex, use <code>|</code></li>
+<li>LBTEST - What was the lab test name?</li>
+<li>LBORRES - What was the result of the result lab test?</li>
+<li>LBNDIND - How [did/do] the reported values compare within the [reference/normal/expected] range?</li>
+<li>LBORNRLO - What was the lower limit of the reference range for this lab test, &gt;=</li>
+<li>LBORNRHI - What was the high limit of the reference range for this lab test, &lt;=</li>
 </ul>
 <table>
 <caption>lab reference ranges</caption>
 <thead>
 <tr class="header">
-<th align="right">age_min</th>
-<th align="right">age_max</th>
-<th align="left">sex</th>
-<th align="left">human_name</th>
-<th align="left">name_lab_vals</th>
-<th align="left">name_is_norm</th>
-<th align="left">lab_vals_min</th>
-<th align="left">lab_vals_max</th>
+<th align="right">AGELOW</th>
+<th align="right">AGEHIGH</th>
+<th align="left">SEX</th>
+<th align="left">LBTEST</th>
+<th align="left">LBORRES</th>
+<th align="left">LBNDIND</th>
+<th align="left">LBORNRLO</th>
+<th align="left">LBORNRHI</th>
 </tr>
 </thead>
 <tbody>
@@ -385,10 +386,10 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <th align="left">id</th>
 <th align="left">age</th>
 <th align="left">sex</th>
-<th align="left">gluc_post</th>
-<th align="left">gluc_res_post</th>
-<th align="left">ast_post</th>
-<th align="left">ast_res_post</th>
+<th align="left">gluc_v1</th>
+<th align="left">gluc_res_v1</th>
+<th align="left">ast_v2</th>
+<th align="left">ast_res_v2</th>
 </tr>
 </thead>
 <tbody>
@@ -421,80 +422,80 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 </tr>
 </tbody>
 </table>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" title="1"><span class="co"># &quot;norm&quot; and &quot;no&quot; it is an example, necessary variable for the estimate, get from the dataset</span></a>
-<a class="sourceLine" id="cb2-2" title="2">refs &lt;-<span class="st"> </span><span class="kw">system.file</span>(<span class="st">&quot;labs_refer.xlsx&quot;</span>, <span class="dt">package =</span> <span class="st">&quot;dmtools&quot;</span>)</a>
-<a class="sourceLine" id="cb2-3" title="3">obj_lab &lt;-<span class="st"> </span><span class="kw">lab</span>(refs, id, age, sex, <span class="st">&quot;norm&quot;</span>, <span class="st">&quot;no&quot;</span>)</a>
-<a class="sourceLine" id="cb2-4" title="4">obj_lab &lt;-<span class="st"> </span>obj_lab <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">check</span>(df)</a>
-<a class="sourceLine" id="cb2-5" title="5"></a>
-<a class="sourceLine" id="cb2-6" title="6"><span class="co"># ok - analysis, which has a correct estimate of the result</span></a>
-<a class="sourceLine" id="cb2-7" title="7">obj_lab <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">choose_test</span>(<span class="st">&quot;ok&quot;</span>)</a>
-<a class="sourceLine" id="cb2-8" title="8"><span class="co">#&gt;   id age sex human_lab  name_lab      refs lab_vals is_norm vals_to_dbl</span></a>
-<a class="sourceLine" id="cb2-9" title="9"><span class="co">#&gt; 1 01  19   f      gluc gluc_post 3.9 - 5.9      5.5    norm         5.5</span></a>
-<a class="sourceLine" id="cb2-10" title="10"><span class="co">#&gt; 2 01  19   f       ast  ast_post    0 - 39       30    norm        30.0</span></a>
-<a class="sourceLine" id="cb2-11" title="11"><span class="co">#&gt; 3 03  22   m       ast  ast_post    0 - 42       31    norm        31.0</span></a>
-<a class="sourceLine" id="cb2-12" title="12"><span class="co">#&gt;   auto_norm</span></a>
-<a class="sourceLine" id="cb2-13" title="13"><span class="co">#&gt; 1      norm</span></a>
-<a class="sourceLine" id="cb2-14" title="14"><span class="co">#&gt; 2      norm</span></a>
-<a class="sourceLine" id="cb2-15" title="15"><span class="co">#&gt; 3      norm</span></a>
-<a class="sourceLine" id="cb2-16" title="16"></a>
-<a class="sourceLine" id="cb2-17" title="17"><span class="co"># mis - analysis, which has an incorrect estimate of the result</span></a>
-<a class="sourceLine" id="cb2-18" title="18">obj_lab <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">choose_test</span>(<span class="st">&quot;mis&quot;</span>)</a>
-<a class="sourceLine" id="cb2-19" title="19"><span class="co">#&gt;   id age sex human_lab  name_lab      refs lab_vals is_norm vals_to_dbl</span></a>
-<a class="sourceLine" id="cb2-20" title="20"><span class="co">#&gt; 1 02  20   m       ast  ast_post    0 - 42       48    norm        48.0</span></a>
-<a class="sourceLine" id="cb2-21" title="21"><span class="co">#&gt; 2 03  22   m      gluc gluc_post 3.9 - 5.9      9.7    norm         9.7</span></a>
-<a class="sourceLine" id="cb2-22" title="22"><span class="co">#&gt;   auto_norm</span></a>
-<a class="sourceLine" id="cb2-23" title="23"><span class="co">#&gt; 1        no</span></a>
-<a class="sourceLine" id="cb2-24" title="24"><span class="co">#&gt; 2        no</span></a>
-<a class="sourceLine" id="cb2-25" title="25"></a>
-<a class="sourceLine" id="cb2-26" title="26"><span class="co"># skip - analysis, which has an empty value of the estimate</span></a>
-<a class="sourceLine" id="cb2-27" title="27">obj_lab <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">choose_test</span>(<span class="st">&quot;skip&quot;</span>)</a>
-<a class="sourceLine" id="cb2-28" title="28"><span class="co">#&gt;   id age sex human_lab  name_lab      refs lab_vals is_norm vals_to_dbl</span></a>
-<a class="sourceLine" id="cb2-29" title="29"><span class="co">#&gt; 1 02  20   m      gluc gluc_post 3.9 - 5.9      4.1    &lt;NA&gt;         4.1</span></a>
-<a class="sourceLine" id="cb2-30" title="30"><span class="co">#&gt;   auto_norm</span></a>
-<a class="sourceLine" id="cb2-31" title="31"><span class="co">#&gt; 1      &lt;NA&gt;</span></a>
-<a class="sourceLine" id="cb2-32" title="32"></a>
-<a class="sourceLine" id="cb2-33" title="33"><span class="co"># all analyzes </span></a>
-<a class="sourceLine" id="cb2-34" title="34">obj_lab <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">get_result</span>()</a>
-<a class="sourceLine" id="cb2-35" title="35"><span class="co">#&gt;   id age sex human_lab  name_lab      refs lab_vals is_norm vals_to_dbl</span></a>
-<a class="sourceLine" id="cb2-36" title="36"><span class="co">#&gt; 1 01  19   f      gluc gluc_post 3.9 - 5.9      5.5    norm         5.5</span></a>
-<a class="sourceLine" id="cb2-37" title="37"><span class="co">#&gt; 2 01  19   f       ast  ast_post    0 - 39       30    norm        30.0</span></a>
-<a class="sourceLine" id="cb2-38" title="38"><span class="co">#&gt; 3 02  20   m      gluc gluc_post 3.9 - 5.9      4.1    &lt;NA&gt;         4.1</span></a>
-<a class="sourceLine" id="cb2-39" title="39"><span class="co">#&gt; 4 02  20   m       ast  ast_post    0 - 42       48    norm        48.0</span></a>
-<a class="sourceLine" id="cb2-40" title="40"><span class="co">#&gt; 5 03  22   m      gluc gluc_post 3.9 - 5.9      9.7    norm         9.7</span></a>
-<a class="sourceLine" id="cb2-41" title="41"><span class="co">#&gt; 6 03  22   m       ast  ast_post    0 - 42       31    norm        31.0</span></a>
-<a class="sourceLine" id="cb2-42" title="42"><span class="co">#&gt;   auto_norm is_right</span></a>
-<a class="sourceLine" id="cb2-43" title="43"><span class="co">#&gt; 1      norm     TRUE</span></a>
-<a class="sourceLine" id="cb2-44" title="44"><span class="co">#&gt; 2      norm     TRUE</span></a>
-<a class="sourceLine" id="cb2-45" title="45"><span class="co">#&gt; 3      &lt;NA&gt;       NA</span></a>
-<a class="sourceLine" id="cb2-46" title="46"><span class="co">#&gt; 4        no    FALSE</span></a>
-<a class="sourceLine" id="cb2-47" title="47"><span class="co">#&gt; 5        no    FALSE</span></a>
-<a class="sourceLine" id="cb2-48" title="48"><span class="co">#&gt; 6      norm     TRUE</span></a></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1"></a><span class="co"># &quot;norm&quot; and &quot;no&quot; it is an example, necessary variable for the estimate, get from the dataset</span></span>
+<span id="cb2-2"><a href="#cb2-2"></a>refs &lt;-<span class="st"> </span><span class="kw">system.file</span>(<span class="st">&quot;labs_refer.xlsx&quot;</span>, <span class="dt">package =</span> <span class="st">&quot;dmtools&quot;</span>)</span>
+<span id="cb2-3"><a href="#cb2-3"></a>obj_lab &lt;-<span class="st"> </span><span class="kw">lab</span>(refs, id, age, sex, <span class="st">&quot;norm&quot;</span>, <span class="st">&quot;no&quot;</span>)</span>
+<span id="cb2-4"><a href="#cb2-4"></a>obj_lab &lt;-<span class="st"> </span>obj_lab <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">check</span>(df)</span>
+<span id="cb2-5"><a href="#cb2-5"></a></span>
+<span id="cb2-6"><a href="#cb2-6"></a><span class="co"># ok - analysis, which has a correct estimate of the result</span></span>
+<span id="cb2-7"><a href="#cb2-7"></a>obj_lab <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">choose_test</span>(<span class="st">&quot;ok&quot;</span>)</span>
+<span id="cb2-8"><a href="#cb2-8"></a><span class="co">#&gt;   id age sex LBTEST LBTESCD VISIT LBORNRLO LBORNRHI LBORRES LBNRIND</span></span>
+<span id="cb2-9"><a href="#cb2-9"></a><span class="co">#&gt; 1 01  19   f   gluc    gluc   _v1      3.9      5.9     5.5    norm</span></span>
+<span id="cb2-10"><a href="#cb2-10"></a><span class="co">#&gt; 2 01  19   f    ast     ast   _v2      0.0     39.0      30    norm</span></span>
+<span id="cb2-11"><a href="#cb2-11"></a><span class="co">#&gt; 3 03  22   m    ast     ast   _v2      0.0     42.0      31    norm</span></span>
+<span id="cb2-12"><a href="#cb2-12"></a><span class="co">#&gt;   RES_TYPE_NUM IND_EXPECTED</span></span>
+<span id="cb2-13"><a href="#cb2-13"></a><span class="co">#&gt; 1          5.5         norm</span></span>
+<span id="cb2-14"><a href="#cb2-14"></a><span class="co">#&gt; 2         30.0         norm</span></span>
+<span id="cb2-15"><a href="#cb2-15"></a><span class="co">#&gt; 3         31.0         norm</span></span>
+<span id="cb2-16"><a href="#cb2-16"></a></span>
+<span id="cb2-17"><a href="#cb2-17"></a><span class="co"># mis - analysis, which has an incorrect estimate of the result</span></span>
+<span id="cb2-18"><a href="#cb2-18"></a>obj_lab <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">choose_test</span>(<span class="st">&quot;mis&quot;</span>)</span>
+<span id="cb2-19"><a href="#cb2-19"></a><span class="co">#&gt;   id age sex LBTEST LBTESCD VISIT LBORNRLO LBORNRHI LBORRES LBNRIND</span></span>
+<span id="cb2-20"><a href="#cb2-20"></a><span class="co">#&gt; 1 02  20   m    ast     ast   _v2      0.0     42.0      48    norm</span></span>
+<span id="cb2-21"><a href="#cb2-21"></a><span class="co">#&gt; 2 03  22   m   gluc    gluc   _v1      3.9      5.9     9.7    norm</span></span>
+<span id="cb2-22"><a href="#cb2-22"></a><span class="co">#&gt;   RES_TYPE_NUM IND_EXPECTED</span></span>
+<span id="cb2-23"><a href="#cb2-23"></a><span class="co">#&gt; 1         48.0           no</span></span>
+<span id="cb2-24"><a href="#cb2-24"></a><span class="co">#&gt; 2          9.7           no</span></span>
+<span id="cb2-25"><a href="#cb2-25"></a></span>
+<span id="cb2-26"><a href="#cb2-26"></a><span class="co"># skip - analysis, which has an empty value of the estimate</span></span>
+<span id="cb2-27"><a href="#cb2-27"></a>obj_lab <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">choose_test</span>(<span class="st">&quot;skip&quot;</span>)</span>
+<span id="cb2-28"><a href="#cb2-28"></a><span class="co">#&gt;   id age sex LBTEST LBTESCD VISIT LBORNRLO LBORNRHI LBORRES LBNRIND</span></span>
+<span id="cb2-29"><a href="#cb2-29"></a><span class="co">#&gt; 1 02  20   m   gluc    gluc   _v1      3.9      5.9     4.1    &lt;NA&gt;</span></span>
+<span id="cb2-30"><a href="#cb2-30"></a><span class="co">#&gt;   RES_TYPE_NUM IND_EXPECTED</span></span>
+<span id="cb2-31"><a href="#cb2-31"></a><span class="co">#&gt; 1          4.1         &lt;NA&gt;</span></span>
+<span id="cb2-32"><a href="#cb2-32"></a></span>
+<span id="cb2-33"><a href="#cb2-33"></a><span class="co"># all analyzes </span></span>
+<span id="cb2-34"><a href="#cb2-34"></a>obj_lab <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">get_result</span>()</span>
+<span id="cb2-35"><a href="#cb2-35"></a><span class="co">#&gt;   id age sex LBTEST LBTESCD VISIT LBORNRLO LBORNRHI LBORRES LBNRIND</span></span>
+<span id="cb2-36"><a href="#cb2-36"></a><span class="co">#&gt; 1 01  19   f   gluc    gluc   _v1      3.9      5.9     5.5    norm</span></span>
+<span id="cb2-37"><a href="#cb2-37"></a><span class="co">#&gt; 2 01  19   f    ast     ast   _v2      0.0     39.0      30    norm</span></span>
+<span id="cb2-38"><a href="#cb2-38"></a><span class="co">#&gt; 3 02  20   m   gluc    gluc   _v1      3.9      5.9     4.1    &lt;NA&gt;</span></span>
+<span id="cb2-39"><a href="#cb2-39"></a><span class="co">#&gt; 4 02  20   m    ast     ast   _v2      0.0     42.0      48    norm</span></span>
+<span id="cb2-40"><a href="#cb2-40"></a><span class="co">#&gt; 5 03  22   m   gluc    gluc   _v1      3.9      5.9     9.7    norm</span></span>
+<span id="cb2-41"><a href="#cb2-41"></a><span class="co">#&gt; 6 03  22   m    ast     ast   _v2      0.0     42.0      31    norm</span></span>
+<span id="cb2-42"><a href="#cb2-42"></a><span class="co">#&gt;   RES_TYPE_NUM IND_EXPECTED IS_RIGHT</span></span>
+<span id="cb2-43"><a href="#cb2-43"></a><span class="co">#&gt; 1          5.5         norm     TRUE</span></span>
+<span id="cb2-44"><a href="#cb2-44"></a><span class="co">#&gt; 2         30.0         norm     TRUE</span></span>
+<span id="cb2-45"><a href="#cb2-45"></a><span class="co">#&gt; 3          4.1         &lt;NA&gt;       NA</span></span>
+<span id="cb2-46"><a href="#cb2-46"></a><span class="co">#&gt; 4         48.0           no    FALSE</span></span>
+<span id="cb2-47"><a href="#cb2-47"></a><span class="co">#&gt; 5          9.7           no    FALSE</span></span>
+<span id="cb2-48"><a href="#cb2-48"></a><span class="co">#&gt; 6         31.0         norm     TRUE</span></span></code></pre></div>
 </div>
 <div id="dates" class="section level3">
 <h3>dates</h3>
 <p>For dates check, you need to create the excel table like in the example.</p>
 <ul>
-<li>minus, plus, shift - parameter of timeline</li>
-<li>num_visit - parameter for function e.g. <code>contains(num_visit)</code></li>
-<li>name_visit - friendly name of visit</li>
-<li>standard_date - standard date from a dataset, with postfix or prefix</li>
-<li>standard_name - friendly name of standard date</li>
-<li>check_equal - check date equality within a visit</li>
-<li>equal_date - date for check equality from a dataset, with postfix or prefix</li>
+<li>MINUS, PLUS, VISITDY - parameter of a timeline</li>
+<li>VISITNUM - clinical encounter number, parameter for function e.g. <code>contains(num_visit)</code></li>
+<li>VISIT - protocol-defined description of a clinical encounter</li>
+<li>STARTDAT - start date from a dataset, with postfix or prefix</li>
+<li>STARTVISIT - friendly name of start date</li>
+<li>IS_EQUAL - check date equality within a visit</li>
+<li>EQUALDAT - date for check equality from a dataset, with postfix or prefix</li>
 </ul>
 <table>
 <caption>timeline</caption>
 <thead>
 <tr class="header">
-<th align="left">num_visit</th>
-<th align="left">name_visit</th>
-<th align="right">minus</th>
-<th align="right">plus</th>
-<th align="right">shift</th>
-<th align="left">standard_date</th>
-<th align="left">standard_name</th>
-<th align="left">check_equal</th>
-<th align="left">equal_date</th>
+<th align="left">VISITNUM</th>
+<th align="left">VISIT</th>
+<th align="right">MINUS</th>
+<th align="right">PLUS</th>
+<th align="right">VISITDY</th>
+<th align="left">STARTDAT</th>
+<th align="left">STARTVISIT</th>
+<th align="left">IS_EQUAL</th>
+<th align="left">EQUALDAT</th>
 </tr>
 </thead>
 <tbody>
@@ -568,161 +569,80 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 </tr>
 </tbody>
 </table>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" title="1"><span class="co"># use parameter str_date for search columns with dates, default:&quot;DAT&quot;</span></a>
-<a class="sourceLine" id="cb3-2" title="2">dates &lt;-<span class="st"> </span><span class="kw">system.file</span>(<span class="st">&quot;dates.xlsx&quot;</span>, <span class="dt">package =</span> <span class="st">&quot;dmtools&quot;</span>)</a>
-<a class="sourceLine" id="cb3-3" title="3">obj_date &lt;-<span class="st"> </span><span class="kw">date</span>(dates, id, dplyr<span class="op">::</span>contains, dplyr<span class="op">::</span>matches)</a>
-<a class="sourceLine" id="cb3-4" title="4">obj_date &lt;-<span class="st"> </span>obj_date <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">check</span>(df)</a>
-<a class="sourceLine" id="cb3-5" title="5"></a>
-<a class="sourceLine" id="cb3-6" title="6"><span class="co"># out - dates, which are out of the protocol&#39;s timeline</span></a>
-<a class="sourceLine" id="cb3-7" title="7">obj_date <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">choose_test</span>(<span class="st">&quot;out&quot;</span>)</a>
-<a class="sourceLine" id="cb3-8" title="8"><span class="co">#&gt;   id         standard_name standard_date name_event   name_item  date_item</span></a>
-<a class="sourceLine" id="cb3-9" title="9"><span class="co">#&gt; 1 01 date of randomization    1991-03-15    visit 2 bio_date_E3 1991-03-23</span></a>
-<a class="sourceLine" id="cb3-10" title="10"><span class="co">#&gt;                standard_interval out</span></a>
-<a class="sourceLine" id="cb3-11" title="11"><span class="co">#&gt; 1 1991-03-19 UTC--1991-03-21 UTC -&gt;2</span></a>
-<a class="sourceLine" id="cb3-12" title="12"></a>
-<a class="sourceLine" id="cb3-13" title="13"><span class="co"># uneq - dates, which are unequal</span></a>
-<a class="sourceLine" id="cb3-14" title="14">obj_date <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">choose_test</span>(<span class="st">&quot;uneq&quot;</span>)</a>
-<a class="sourceLine" id="cb3-15" title="15"><span class="co">#&gt;   id name_event   name_item  date_item stand_equal is_in_timeline</span></a>
-<a class="sourceLine" id="cb3-16" title="16"><span class="co">#&gt; 1 01    visit 2 bio_date_E3 1991-03-23  1991-03-21          FALSE</span></a>
-<a class="sourceLine" id="cb3-17" title="17"></a>
-<a class="sourceLine" id="cb3-18" title="18"><span class="co"># ok - correct dates</span></a>
-<a class="sourceLine" id="cb3-19" title="19">obj_date <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">choose_test</span>(<span class="st">&quot;ok&quot;</span>)</a>
-<a class="sourceLine" id="cb3-20" title="20"><span class="co">#&gt;    id         standard_name standard_date name_event      name_item  date_item</span></a>
-<a class="sourceLine" id="cb3-21" title="21"><span class="co">#&gt; 1  01     date of screening    1991-03-13  screening screen_date_E1 1991-03-13</span></a>
-<a class="sourceLine" id="cb3-22" title="22"><span class="co">#&gt; 2  01 date of randomization    1991-03-15       rand   rand_date_E2 1991-03-15</span></a>
-<a class="sourceLine" id="cb3-23" title="23"><span class="co">#&gt; 3  01 date of randomization    1991-03-15    visit 2     ph_date_E3 1991-03-21</span></a>
-<a class="sourceLine" id="cb3-24" title="24"><span class="co">#&gt; 4  02     date of screening    1991-03-07  screening screen_date_E1 1991-03-07</span></a>
-<a class="sourceLine" id="cb3-25" title="25"><span class="co">#&gt; 5  02 date of randomization    1991-03-11       rand   rand_date_E2 1991-03-11</span></a>
-<a class="sourceLine" id="cb3-26" title="26"><span class="co">#&gt; 6  02 date of randomization    1991-03-11    visit 2     ph_date_E3 1991-03-16</span></a>
-<a class="sourceLine" id="cb3-27" title="27"><span class="co">#&gt; 7  02 date of randomization    1991-03-11    visit 2    bio_date_E3 1991-03-16</span></a>
-<a class="sourceLine" id="cb3-28" title="28"><span class="co">#&gt; 8  03     date of screening    1991-03-08  screening screen_date_E1 1991-03-08</span></a>
-<a class="sourceLine" id="cb3-29" title="29"><span class="co">#&gt; 9  03 date of randomization    1991-03-10       rand   rand_date_E2 1991-03-10</span></a>
-<a class="sourceLine" id="cb3-30" title="30"><span class="co">#&gt; 10 03 date of randomization    1991-03-10    visit 2     ph_date_E3 1991-03-16</span></a>
-<a class="sourceLine" id="cb3-31" title="31"><span class="co">#&gt; 11 03 date of randomization    1991-03-10    visit 2    bio_date_E3 1991-03-16</span></a>
-<a class="sourceLine" id="cb3-32" title="32"><span class="co">#&gt;                 standard_interval stand_equal</span></a>
-<a class="sourceLine" id="cb3-33" title="33"><span class="co">#&gt; 1  1991-03-13 UTC--1991-03-16 UTC  1991-03-13</span></a>
-<a class="sourceLine" id="cb3-34" title="34"><span class="co">#&gt; 2  1991-03-15 UTC--1991-03-15 UTC  1991-03-15</span></a>
-<a class="sourceLine" id="cb3-35" title="35"><span class="co">#&gt; 3  1991-03-19 UTC--1991-03-21 UTC  1991-03-21</span></a>
-<a class="sourceLine" id="cb3-36" title="36"><span class="co">#&gt; 4  1991-03-07 UTC--1991-03-10 UTC  1991-03-07</span></a>
-<a class="sourceLine" id="cb3-37" title="37"><span class="co">#&gt; 5  1991-03-11 UTC--1991-03-11 UTC  1991-03-11</span></a>
-<a class="sourceLine" id="cb3-38" title="38"><span class="co">#&gt; 6  1991-03-15 UTC--1991-03-17 UTC  1991-03-16</span></a>
-<a class="sourceLine" id="cb3-39" title="39"><span class="co">#&gt; 7  1991-03-15 UTC--1991-03-17 UTC  1991-03-16</span></a>
-<a class="sourceLine" id="cb3-40" title="40"><span class="co">#&gt; 8  1991-03-08 UTC--1991-03-11 UTC  1991-03-08</span></a>
-<a class="sourceLine" id="cb3-41" title="41"><span class="co">#&gt; 9  1991-03-10 UTC--1991-03-10 UTC  1991-03-10</span></a>
-<a class="sourceLine" id="cb3-42" title="42"><span class="co">#&gt; 10 1991-03-14 UTC--1991-03-16 UTC  1991-03-16</span></a>
-<a class="sourceLine" id="cb3-43" title="43"><span class="co">#&gt; 11 1991-03-14 UTC--1991-03-16 UTC  1991-03-16</span></a>
-<a class="sourceLine" id="cb3-44" title="44"></a>
-<a class="sourceLine" id="cb3-45" title="45"><span class="co"># all dates</span></a>
-<a class="sourceLine" id="cb3-46" title="46">obj_date <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">get_result</span>()</a>
-<a class="sourceLine" id="cb3-47" title="47"><span class="co">#&gt;    id         standard_name standard_date name_event      name_item  date_item</span></a>
-<a class="sourceLine" id="cb3-48" title="48"><span class="co">#&gt; 1  01     date of screening    1991-03-13  screening screen_date_E1 1991-03-13</span></a>
-<a class="sourceLine" id="cb3-49" title="49"><span class="co">#&gt; 2  01 date of randomization    1991-03-15       rand   rand_date_E2 1991-03-15</span></a>
-<a class="sourceLine" id="cb3-50" title="50"><span class="co">#&gt; 3  01 date of randomization    1991-03-15    visit 2     ph_date_E3 1991-03-21</span></a>
-<a class="sourceLine" id="cb3-51" title="51"><span class="co">#&gt; 4  01 date of randomization    1991-03-15    visit 2    bio_date_E3 1991-03-23</span></a>
-<a class="sourceLine" id="cb3-52" title="52"><span class="co">#&gt; 5  02     date of screening    1991-03-07  screening screen_date_E1 1991-03-07</span></a>
-<a class="sourceLine" id="cb3-53" title="53"><span class="co">#&gt; 6  02 date of randomization    1991-03-11       rand   rand_date_E2 1991-03-11</span></a>
-<a class="sourceLine" id="cb3-54" title="54"><span class="co">#&gt; 7  02 date of randomization    1991-03-11    visit 2     ph_date_E3 1991-03-16</span></a>
-<a class="sourceLine" id="cb3-55" title="55"><span class="co">#&gt; 8  02 date of randomization    1991-03-11    visit 2    bio_date_E3 1991-03-16</span></a>
-<a class="sourceLine" id="cb3-56" title="56"><span class="co">#&gt; 9  03     date of screening    1991-03-08  screening screen_date_E1 1991-03-08</span></a>
-<a class="sourceLine" id="cb3-57" title="57"><span class="co">#&gt; 10 03 date of randomization    1991-03-10       rand   rand_date_E2 1991-03-10</span></a>
-<a class="sourceLine" id="cb3-58" title="58"><span class="co">#&gt; 11 03 date of randomization    1991-03-10    visit 2     ph_date_E3 1991-03-16</span></a>
-<a class="sourceLine" id="cb3-59" title="59"><span class="co">#&gt; 12 03 date of randomization    1991-03-10    visit 2    bio_date_E3 1991-03-16</span></a>
-<a class="sourceLine" id="cb3-60" title="60"><span class="co">#&gt;                 standard_interval stand_equal is_in_timeline is_equal out</span></a>
-<a class="sourceLine" id="cb3-61" title="61"><span class="co">#&gt; 1  1991-03-13 UTC--1991-03-16 UTC  1991-03-13           TRUE     TRUE   0</span></a>
-<a class="sourceLine" id="cb3-62" title="62"><span class="co">#&gt; 2  1991-03-15 UTC--1991-03-15 UTC  1991-03-15           TRUE     TRUE   0</span></a>
-<a class="sourceLine" id="cb3-63" title="63"><span class="co">#&gt; 3  1991-03-19 UTC--1991-03-21 UTC  1991-03-21           TRUE     TRUE   0</span></a>
-<a class="sourceLine" id="cb3-64" title="64"><span class="co">#&gt; 4  1991-03-19 UTC--1991-03-21 UTC  1991-03-21          FALSE    FALSE -&gt;2</span></a>
-<a class="sourceLine" id="cb3-65" title="65"><span class="co">#&gt; 5  1991-03-07 UTC--1991-03-10 UTC  1991-03-07           TRUE     TRUE   0</span></a>
-<a class="sourceLine" id="cb3-66" title="66"><span class="co">#&gt; 6  1991-03-11 UTC--1991-03-11 UTC  1991-03-11           TRUE     TRUE   0</span></a>
-<a class="sourceLine" id="cb3-67" title="67"><span class="co">#&gt; 7  1991-03-15 UTC--1991-03-17 UTC  1991-03-16           TRUE     TRUE   0</span></a>
-<a class="sourceLine" id="cb3-68" title="68"><span class="co">#&gt; 8  1991-03-15 UTC--1991-03-17 UTC  1991-03-16           TRUE     TRUE   0</span></a>
-<a class="sourceLine" id="cb3-69" title="69"><span class="co">#&gt; 9  1991-03-08 UTC--1991-03-11 UTC  1991-03-08           TRUE     TRUE   0</span></a>
-<a class="sourceLine" id="cb3-70" title="70"><span class="co">#&gt; 10 1991-03-10 UTC--1991-03-10 UTC  1991-03-10           TRUE     TRUE   0</span></a>
-<a class="sourceLine" id="cb3-71" title="71"><span class="co">#&gt; 11 1991-03-14 UTC--1991-03-16 UTC  1991-03-16           TRUE     TRUE   0</span></a>
-<a class="sourceLine" id="cb3-72" title="72"><span class="co">#&gt; 12 1991-03-14 UTC--1991-03-16 UTC  1991-03-16           TRUE     TRUE   0</span></a></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1"></a><span class="co"># use parameter str_date for search columns with dates, default:&quot;DAT&quot;</span></span>
+<span id="cb3-2"><a href="#cb3-2"></a>dates &lt;-<span class="st"> </span><span class="kw">system.file</span>(<span class="st">&quot;dates.xlsx&quot;</span>, <span class="dt">package =</span> <span class="st">&quot;dmtools&quot;</span>)</span>
+<span id="cb3-3"><a href="#cb3-3"></a>obj_date &lt;-<span class="st"> </span><span class="kw">date</span>(dates, id, dplyr<span class="op">::</span>contains, dplyr<span class="op">::</span>matches)</span>
+<span id="cb3-4"><a href="#cb3-4"></a>obj_date &lt;-<span class="st"> </span>obj_date <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">check</span>(df)</span>
+<span id="cb3-5"><a href="#cb3-5"></a></span>
+<span id="cb3-6"><a href="#cb3-6"></a><span class="co"># out - dates, which are out of the protocol&#39;s timeline</span></span>
+<span id="cb3-7"><a href="#cb3-7"></a>obj_date <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">choose_test</span>(<span class="st">&quot;out&quot;</span>)</span>
+<span id="cb3-8"><a href="#cb3-8"></a><span class="co">#&gt;   id            STARTVISIT   STARTDAT   VISIT        TERM     VISDAT</span></span>
+<span id="cb3-9"><a href="#cb3-9"></a><span class="co">#&gt; 1 01 date of randomization 1991-03-15 visit 2 bio_date_E3 1991-03-23</span></span>
+<span id="cb3-10"><a href="#cb3-10"></a><span class="co">#&gt;                          PLANDAT DAYS_OUT</span></span>
+<span id="cb3-11"><a href="#cb3-11"></a><span class="co">#&gt; 1 1991-03-19 UTC--1991-03-21 UTC        2</span></span>
+<span id="cb3-12"><a href="#cb3-12"></a></span>
+<span id="cb3-13"><a href="#cb3-13"></a><span class="co"># uneq - dates, which are unequal</span></span>
+<span id="cb3-14"><a href="#cb3-14"></a>obj_date <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">choose_test</span>(<span class="st">&quot;uneq&quot;</span>)</span>
+<span id="cb3-15"><a href="#cb3-15"></a><span class="co">#&gt;   id   VISIT        TERM     VISDAT   EQUALDAT IS_TIMELINE</span></span>
+<span id="cb3-16"><a href="#cb3-16"></a><span class="co">#&gt; 1 01 visit 2 bio_date_E3 1991-03-23 1991-03-21       FALSE</span></span>
+<span id="cb3-17"><a href="#cb3-17"></a></span>
+<span id="cb3-18"><a href="#cb3-18"></a><span class="co"># ok - correct dates</span></span>
+<span id="cb3-19"><a href="#cb3-19"></a>obj_date <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">choose_test</span>(<span class="st">&quot;ok&quot;</span>)</span>
+<span id="cb3-20"><a href="#cb3-20"></a><span class="co">#&gt;    id            STARTVISIT   STARTDAT     VISIT           TERM     VISDAT</span></span>
+<span id="cb3-21"><a href="#cb3-21"></a><span class="co">#&gt; 1  01     date of screening 1991-03-13 screening screen_date_E1 1991-03-13</span></span>
+<span id="cb3-22"><a href="#cb3-22"></a><span class="co">#&gt; 2  01 date of randomization 1991-03-15      rand   rand_date_E2 1991-03-15</span></span>
+<span id="cb3-23"><a href="#cb3-23"></a><span class="co">#&gt; 3  01 date of randomization 1991-03-15   visit 2     ph_date_E3 1991-03-21</span></span>
+<span id="cb3-24"><a href="#cb3-24"></a><span class="co">#&gt; 4  02     date of screening 1991-03-07 screening screen_date_E1 1991-03-07</span></span>
+<span id="cb3-25"><a href="#cb3-25"></a><span class="co">#&gt; 5  02 date of randomization 1991-03-11      rand   rand_date_E2 1991-03-11</span></span>
+<span id="cb3-26"><a href="#cb3-26"></a><span class="co">#&gt; 6  02 date of randomization 1991-03-11   visit 2     ph_date_E3 1991-03-16</span></span>
+<span id="cb3-27"><a href="#cb3-27"></a><span class="co">#&gt; 7  02 date of randomization 1991-03-11   visit 2    bio_date_E3 1991-03-16</span></span>
+<span id="cb3-28"><a href="#cb3-28"></a><span class="co">#&gt; 8  03     date of screening 1991-03-08 screening screen_date_E1 1991-03-08</span></span>
+<span id="cb3-29"><a href="#cb3-29"></a><span class="co">#&gt; 9  03 date of randomization 1991-03-10      rand   rand_date_E2 1991-03-10</span></span>
+<span id="cb3-30"><a href="#cb3-30"></a><span class="co">#&gt; 10 03 date of randomization 1991-03-10   visit 2     ph_date_E3 1991-03-16</span></span>
+<span id="cb3-31"><a href="#cb3-31"></a><span class="co">#&gt; 11 03 date of randomization 1991-03-10   visit 2    bio_date_E3 1991-03-16</span></span>
+<span id="cb3-32"><a href="#cb3-32"></a><span class="co">#&gt;                           PLANDAT   EQUALDAT</span></span>
+<span id="cb3-33"><a href="#cb3-33"></a><span class="co">#&gt; 1  1991-03-13 UTC--1991-03-16 UTC 1991-03-13</span></span>
+<span id="cb3-34"><a href="#cb3-34"></a><span class="co">#&gt; 2  1991-03-15 UTC--1991-03-15 UTC 1991-03-15</span></span>
+<span id="cb3-35"><a href="#cb3-35"></a><span class="co">#&gt; 3  1991-03-19 UTC--1991-03-21 UTC 1991-03-21</span></span>
+<span id="cb3-36"><a href="#cb3-36"></a><span class="co">#&gt; 4  1991-03-07 UTC--1991-03-10 UTC 1991-03-07</span></span>
+<span id="cb3-37"><a href="#cb3-37"></a><span class="co">#&gt; 5  1991-03-11 UTC--1991-03-11 UTC 1991-03-11</span></span>
+<span id="cb3-38"><a href="#cb3-38"></a><span class="co">#&gt; 6  1991-03-15 UTC--1991-03-17 UTC 1991-03-16</span></span>
+<span id="cb3-39"><a href="#cb3-39"></a><span class="co">#&gt; 7  1991-03-15 UTC--1991-03-17 UTC 1991-03-16</span></span>
+<span id="cb3-40"><a href="#cb3-40"></a><span class="co">#&gt; 8  1991-03-08 UTC--1991-03-11 UTC 1991-03-08</span></span>
+<span id="cb3-41"><a href="#cb3-41"></a><span class="co">#&gt; 9  1991-03-10 UTC--1991-03-10 UTC 1991-03-10</span></span>
+<span id="cb3-42"><a href="#cb3-42"></a><span class="co">#&gt; 10 1991-03-14 UTC--1991-03-16 UTC 1991-03-16</span></span>
+<span id="cb3-43"><a href="#cb3-43"></a><span class="co">#&gt; 11 1991-03-14 UTC--1991-03-16 UTC 1991-03-16</span></span>
+<span id="cb3-44"><a href="#cb3-44"></a></span>
+<span id="cb3-45"><a href="#cb3-45"></a><span class="co"># all dates</span></span>
+<span id="cb3-46"><a href="#cb3-46"></a>obj_date <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">get_result</span>()</span>
+<span id="cb3-47"><a href="#cb3-47"></a><span class="co">#&gt;    id            STARTVISIT   STARTDAT     VISIT           TERM     VISDAT</span></span>
+<span id="cb3-48"><a href="#cb3-48"></a><span class="co">#&gt; 1  01     date of screening 1991-03-13 screening screen_date_E1 1991-03-13</span></span>
+<span id="cb3-49"><a href="#cb3-49"></a><span class="co">#&gt; 2  01 date of randomization 1991-03-15      rand   rand_date_E2 1991-03-15</span></span>
+<span id="cb3-50"><a href="#cb3-50"></a><span class="co">#&gt; 3  01 date of randomization 1991-03-15   visit 2     ph_date_E3 1991-03-21</span></span>
+<span id="cb3-51"><a href="#cb3-51"></a><span class="co">#&gt; 4  01 date of randomization 1991-03-15   visit 2    bio_date_E3 1991-03-23</span></span>
+<span id="cb3-52"><a href="#cb3-52"></a><span class="co">#&gt; 5  02     date of screening 1991-03-07 screening screen_date_E1 1991-03-07</span></span>
+<span id="cb3-53"><a href="#cb3-53"></a><span class="co">#&gt; 6  02 date of randomization 1991-03-11      rand   rand_date_E2 1991-03-11</span></span>
+<span id="cb3-54"><a href="#cb3-54"></a><span class="co">#&gt; 7  02 date of randomization 1991-03-11   visit 2     ph_date_E3 1991-03-16</span></span>
+<span id="cb3-55"><a href="#cb3-55"></a><span class="co">#&gt; 8  02 date of randomization 1991-03-11   visit 2    bio_date_E3 1991-03-16</span></span>
+<span id="cb3-56"><a href="#cb3-56"></a><span class="co">#&gt; 9  03     date of screening 1991-03-08 screening screen_date_E1 1991-03-08</span></span>
+<span id="cb3-57"><a href="#cb3-57"></a><span class="co">#&gt; 10 03 date of randomization 1991-03-10      rand   rand_date_E2 1991-03-10</span></span>
+<span id="cb3-58"><a href="#cb3-58"></a><span class="co">#&gt; 11 03 date of randomization 1991-03-10   visit 2     ph_date_E3 1991-03-16</span></span>
+<span id="cb3-59"><a href="#cb3-59"></a><span class="co">#&gt; 12 03 date of randomization 1991-03-10   visit 2    bio_date_E3 1991-03-16</span></span>
+<span id="cb3-60"><a href="#cb3-60"></a><span class="co">#&gt;                           PLANDAT   EQUALDAT IS_TIMELINE IS_EQUAL DAYS_OUT</span></span>
+<span id="cb3-61"><a href="#cb3-61"></a><span class="co">#&gt; 1  1991-03-13 UTC--1991-03-16 UTC 1991-03-13        TRUE     TRUE        0</span></span>
+<span id="cb3-62"><a href="#cb3-62"></a><span class="co">#&gt; 2  1991-03-15 UTC--1991-03-15 UTC 1991-03-15        TRUE     TRUE        0</span></span>
+<span id="cb3-63"><a href="#cb3-63"></a><span class="co">#&gt; 3  1991-03-19 UTC--1991-03-21 UTC 1991-03-21        TRUE     TRUE        0</span></span>
+<span id="cb3-64"><a href="#cb3-64"></a><span class="co">#&gt; 4  1991-03-19 UTC--1991-03-21 UTC 1991-03-21       FALSE    FALSE        2</span></span>
+<span id="cb3-65"><a href="#cb3-65"></a><span class="co">#&gt; 5  1991-03-07 UTC--1991-03-10 UTC 1991-03-07        TRUE     TRUE        0</span></span>
+<span id="cb3-66"><a href="#cb3-66"></a><span class="co">#&gt; 6  1991-03-11 UTC--1991-03-11 UTC 1991-03-11        TRUE     TRUE        0</span></span>
+<span id="cb3-67"><a href="#cb3-67"></a><span class="co">#&gt; 7  1991-03-15 UTC--1991-03-17 UTC 1991-03-16        TRUE     TRUE        0</span></span>
+<span id="cb3-68"><a href="#cb3-68"></a><span class="co">#&gt; 8  1991-03-15 UTC--1991-03-17 UTC 1991-03-16        TRUE     TRUE        0</span></span>
+<span id="cb3-69"><a href="#cb3-69"></a><span class="co">#&gt; 9  1991-03-08 UTC--1991-03-11 UTC 1991-03-08        TRUE     TRUE        0</span></span>
+<span id="cb3-70"><a href="#cb3-70"></a><span class="co">#&gt; 10 1991-03-10 UTC--1991-03-10 UTC 1991-03-10        TRUE     TRUE        0</span></span>
+<span id="cb3-71"><a href="#cb3-71"></a><span class="co">#&gt; 11 1991-03-14 UTC--1991-03-16 UTC 1991-03-16        TRUE     TRUE        0</span></span>
+<span id="cb3-72"><a href="#cb3-72"></a><span class="co">#&gt; 12 1991-03-14 UTC--1991-03-16 UTC 1991-03-16        TRUE     TRUE        0</span></span></code></pre></div>
 <p><code>dplyr::contains</code> - A function, which select necessary visit or event e.g. dplyr::start_with, dplyr::contains. It works like <code>df %&gt;% select(contains(&quot;E1&quot;))</code>. You also can use <code>dplyr::start_with</code>, works like <code>df %&gt;% select(start_with(&quot;V1&quot;))</code></p>
 <p><code>dplyr::matches</code> - A function, which select dates from necessary visit e.g. dplyr::matches, dplyr::contains. It works like <code>visit_one %&gt;% select(contains(&quot;DAT&quot;))</code>, default: <code>dplyr::contains()</code></p>
-</div>
-<div id="wbcs-count" class="section level3">
-<h3>WBCs count</h3>
-<p>For WBCs count check, you need to create the excel table like in the example.<br />
-Formula for check is (all * relative) / 100 = absolute.</p>
-<ul>
-<li>human_name - friendly name for WBCs count</li>
-<li>absolute - absolute WBCs from dataset, without postfix or prefix</li>
-<li>relative - relative WBCs from dataset, without postfix or prefix</li>
-</ul>
-<table>
-<caption>wbcc</caption>
-<thead>
-<tr class="header">
-<th align="left">human_name</th>
-<th align="left">absolute</th>
-<th align="left">relative</th>
-<th align="left">all</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td align="left">lymphocytes</td>
-<td align="left">lym_abs</td>
-<td align="left">lym_rel</td>
-<td align="left">wbc</td>
-</tr>
-</tbody>
-</table>
-<table>
-<caption>dataset</caption>
-<thead>
-<tr class="header">
-<th align="left">id</th>
-<th align="right">wbc_post</th>
-<th align="right">lym_rel_post</th>
-<th align="right">lym_abs_post</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td align="left">01</td>
-<td align="right">5.6</td>
-<td align="right">21</td>
-<td align="right">1.18</td>
-</tr>
-<tr class="even">
-<td align="left">02</td>
-<td align="right">7.8</td>
-<td align="right">25</td>
-<td align="right">1.95</td>
-</tr>
-<tr class="odd">
-<td align="left">03</td>
-<td align="right">8.1</td>
-<td align="right">30</td>
-<td align="right">2.13</td>
-</tr>
-</tbody>
-</table>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" title="1">wbcc_file &lt;-<span class="st"> </span><span class="kw">system.file</span>(<span class="st">&quot;wbcc.xlsx&quot;</span>, <span class="dt">package =</span> <span class="st">&quot;dmtools&quot;</span>)</a>
-<a class="sourceLine" id="cb4-2" title="2">wbcc &lt;-<span class="st"> </span><span class="kw">wbc</span>(wbcc_file, id)</a>
-<a class="sourceLine" id="cb4-3" title="3">wbcc &lt;-<span class="st"> </span>wbcc <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">check</span>(df)</a>
-<a class="sourceLine" id="cb4-4" title="4"></a>
-<a class="sourceLine" id="cb4-5" title="5"><span class="co"># mis - wbc, which has an incorrect calculation</span></a>
-<a class="sourceLine" id="cb4-6" title="6">wbcc <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">choose_test</span>(<span class="st">&quot;mis&quot;</span>)</a>
-<a class="sourceLine" id="cb4-7" title="7"><span class="co">#&gt;   id  human_name     lab_name rel all  abs auto_abs</span></a>
-<a class="sourceLine" id="cb4-8" title="8"><span class="co">#&gt; 1 03 lymphocytes lym_abs_post  30 8.1 2.13     2.43</span></a>
-<a class="sourceLine" id="cb4-9" title="9"></a>
-<a class="sourceLine" id="cb4-10" title="10"><span class="co"># ok - wbc, which has a correct calculation</span></a>
-<a class="sourceLine" id="cb4-11" title="11">wbcc <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">choose_test</span>(<span class="st">&quot;ok&quot;</span>)</a>
-<a class="sourceLine" id="cb4-12" title="12"><span class="co">#&gt;   id  human_name     lab_name rel all  abs auto_abs</span></a>
-<a class="sourceLine" id="cb4-13" title="13"><span class="co">#&gt; 1 01 lymphocytes lym_abs_post  21 5.6 1.18     1.18</span></a>
-<a class="sourceLine" id="cb4-14" title="14"><span class="co">#&gt; 2 02 lymphocytes lym_abs_post  25 7.8 1.95     1.95</span></a>
-<a class="sourceLine" id="cb4-15" title="15"></a>
-<a class="sourceLine" id="cb4-16" title="16"><span class="co"># all WBCs count</span></a>
-<a class="sourceLine" id="cb4-17" title="17">wbcc <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">get_result</span>()</a>
-<a class="sourceLine" id="cb4-18" title="18"><span class="co">#&gt;   id  human_name     lab_name rel all  abs auto_abs is_right</span></a>
-<a class="sourceLine" id="cb4-19" title="19"><span class="co">#&gt; 1 01 lymphocytes lym_abs_post  21 5.6 1.18     1.18     TRUE</span></a>
-<a class="sourceLine" id="cb4-20" title="20"><span class="co">#&gt; 2 02 lymphocytes lym_abs_post  25 7.8 1.95     1.95     TRUE</span></a>
-<a class="sourceLine" id="cb4-21" title="21"><span class="co">#&gt; 3 03 lymphocytes lym_abs_post  30 8.1 2.13     2.43    FALSE</span></a></code></pre></div>
 </div>
 <div id="sites" class="section level3">
 <h3>sites</h3>
@@ -731,14 +651,14 @@ Formula for check is (all * relative) / 100 = absolute.</p>
 <caption>lab reference ranges s01</caption>
 <thead>
 <tr class="header">
-<th align="right">age_min</th>
-<th align="right">age_max</th>
-<th align="left">sex</th>
-<th align="left">human_name</th>
-<th align="left">name_lab_vals</th>
-<th align="left">name_is_norm</th>
-<th align="left">lab_vals_min</th>
-<th align="left">lab_vals_max</th>
+<th align="right">AGELOW</th>
+<th align="right">AGEHIGH</th>
+<th align="left">SEX</th>
+<th align="left">LBTEST</th>
+<th align="left">LBORRES</th>
+<th align="left">LBNDIND</th>
+<th align="left">LBORNRLO</th>
+<th align="left">LBORNRHI</th>
 </tr>
 </thead>
 <tbody>
@@ -778,14 +698,14 @@ Formula for check is (all * relative) / 100 = absolute.</p>
 <caption>lab reference ranges s02</caption>
 <thead>
 <tr class="header">
-<th align="right">age_min</th>
-<th align="right">age_max</th>
-<th align="left">sex</th>
-<th align="left">human_name</th>
-<th align="left">name_lab_vals</th>
-<th align="left">name_is_norm</th>
-<th align="left">lab_vals_min</th>
-<th align="left">lab_vals_max</th>
+<th align="right">AGELOW</th>
+<th align="right">AGEHIGH</th>
+<th align="left">SEX</th>
+<th align="left">LBTEST</th>
+<th align="left">LBORRES</th>
+<th align="left">LBNDIND</th>
+<th align="left">LBORNRLO</th>
+<th align="left">LBORNRHI</th>
 </tr>
 </thead>
 <tbody>
@@ -829,10 +749,10 @@ Formula for check is (all * relative) / 100 = absolute.</p>
 <th align="left">id</th>
 <th align="left">age</th>
 <th align="left">sex</th>
-<th align="left">gluc_post</th>
-<th align="left">gluc_res_post</th>
-<th align="left">ast_post</th>
-<th align="left">ast_res_post</th>
+<th align="left">gluc_v1</th>
+<th align="left">gluc_res_v1</th>
+<th align="left">ast_v2</th>
+<th align="left">ast_res_v2</th>
 </tr>
 </thead>
 <tbody>
@@ -858,68 +778,68 @@ Formula for check is (all * relative) / 100 = absolute.</p>
 </tr>
 </tbody>
 </table>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" title="1">refs_s01 &lt;-<span class="st"> </span><span class="kw">system.file</span>(<span class="st">&quot;labs_refer_s01.xlsx&quot;</span>, <span class="dt">package =</span> <span class="st">&quot;dmtools&quot;</span>)</a>
-<a class="sourceLine" id="cb5-2" title="2">refs_s02 &lt;-<span class="st"> </span><span class="kw">system.file</span>(<span class="st">&quot;labs_refer_s02.xlsx&quot;</span>, <span class="dt">package =</span> <span class="st">&quot;dmtools&quot;</span>)</a>
-<a class="sourceLine" id="cb5-3" title="3"></a>
-<a class="sourceLine" id="cb5-4" title="4">s01_lab &lt;-<span class="st"> </span><span class="kw">lab</span>(refs_s01, id, age, sex, <span class="st">&quot;norm&quot;</span>, <span class="st">&quot;no&quot;</span>, <span class="dt">site =</span> <span class="st">&quot;site 01&quot;</span>)</a>
-<a class="sourceLine" id="cb5-5" title="5">s02_lab &lt;-<span class="st"> </span><span class="kw">lab</span>(refs_s02, id, age, sex, <span class="st">&quot;norm&quot;</span>, <span class="st">&quot;no&quot;</span>, <span class="dt">site =</span> <span class="st">&quot;site 02&quot;</span>)</a>
-<a class="sourceLine" id="cb5-6" title="6"></a>
-<a class="sourceLine" id="cb5-7" title="7">labs &lt;-<span class="st"> </span><span class="kw">list</span>(s01_lab, s02_lab)</a>
-<a class="sourceLine" id="cb5-8" title="8">labs &lt;-<span class="st"> </span>labs <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">check_sites</span>(df, site)</a>
-<a class="sourceLine" id="cb5-9" title="9"></a>
-<a class="sourceLine" id="cb5-10" title="10"><span class="co"># mis - analysis, which has an incorrect estimate of the result</span></a>
-<a class="sourceLine" id="cb5-11" title="11">labs <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">test_sites</span>(<span class="cf">function</span> (lab) <span class="kw">choose_test</span>(lab, <span class="st">&quot;mis&quot;</span>))</a>
-<a class="sourceLine" id="cb5-12" title="12"><span class="co">#&gt;   id age sex human_lab name_lab   refs lab_vals is_norm vals_to_dbl auto_norm</span></a>
-<a class="sourceLine" id="cb5-13" title="13"><span class="co">#&gt; 1 02  20   m       ast ast_post 0 - 35       48    norm          48        no</span></a>
-<a class="sourceLine" id="cb5-14" title="14"><span class="co">#&gt;   num_site</span></a>
-<a class="sourceLine" id="cb5-15" title="15"><span class="co">#&gt; 1  site 02</span></a>
-<a class="sourceLine" id="cb5-16" title="16"></a>
-<a class="sourceLine" id="cb5-17" title="17"><span class="co"># ok - analysis, which has a correct estimate of the result</span></a>
-<a class="sourceLine" id="cb5-18" title="18">labs <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">test_sites</span>(<span class="cf">function</span> (lab) <span class="kw">choose_test</span>(lab, <span class="st">&quot;ok&quot;</span>)) </a>
-<a class="sourceLine" id="cb5-19" title="19"><span class="co">#&gt;   id age sex human_lab  name_lab      refs lab_vals is_norm vals_to_dbl</span></a>
-<a class="sourceLine" id="cb5-20" title="20"><span class="co">#&gt; 1 01  19   f      gluc gluc_post   4 - 5.9      5.5    norm         5.5</span></a>
-<a class="sourceLine" id="cb5-21" title="21"><span class="co">#&gt; 2 02  20   m      gluc gluc_post 4.2 - 6.1      4.1      no         4.1</span></a>
-<a class="sourceLine" id="cb5-22" title="22"><span class="co">#&gt;   auto_norm num_site</span></a>
-<a class="sourceLine" id="cb5-23" title="23"><span class="co">#&gt; 1      norm  site 01</span></a>
-<a class="sourceLine" id="cb5-24" title="24"><span class="co">#&gt; 2        no  site 02</span></a>
-<a class="sourceLine" id="cb5-25" title="25"></a>
-<a class="sourceLine" id="cb5-26" title="26"><span class="co"># skip - analysis, which has an empty value of the estimate</span></a>
-<a class="sourceLine" id="cb5-27" title="27">labs <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">test_sites</span>(<span class="cf">function</span> (lab) <span class="kw">choose_test</span>(lab, <span class="st">&quot;skip&quot;</span>))</a>
-<a class="sourceLine" id="cb5-28" title="28"><span class="co">#&gt;   id age sex human_lab name_lab   refs lab_vals is_norm vals_to_dbl auto_norm</span></a>
-<a class="sourceLine" id="cb5-29" title="29"><span class="co">#&gt; 1 01  19   f       ast ast_post 0 - 43       30    &lt;NA&gt;          30      &lt;NA&gt;</span></a>
-<a class="sourceLine" id="cb5-30" title="30"><span class="co">#&gt;   num_site</span></a>
-<a class="sourceLine" id="cb5-31" title="31"><span class="co">#&gt; 1  site 01</span></a>
-<a class="sourceLine" id="cb5-32" title="32"></a>
-<a class="sourceLine" id="cb5-33" title="33"><span class="co"># all analyzes</span></a>
-<a class="sourceLine" id="cb5-34" title="34">labs <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">test_sites</span>(<span class="cf">function</span> (lab) <span class="kw">get_result</span>(lab))</a>
-<a class="sourceLine" id="cb5-35" title="35"><span class="co">#&gt;   id age sex human_lab  name_lab      refs lab_vals is_norm vals_to_dbl</span></a>
-<a class="sourceLine" id="cb5-36" title="36"><span class="co">#&gt; 1 01  19   f      gluc gluc_post   4 - 5.9      5.5    norm         5.5</span></a>
-<a class="sourceLine" id="cb5-37" title="37"><span class="co">#&gt; 2 01  19   f       ast  ast_post    0 - 43       30    &lt;NA&gt;        30.0</span></a>
-<a class="sourceLine" id="cb5-38" title="38"><span class="co">#&gt; 3 02  20   m      gluc gluc_post 4.2 - 6.1      4.1      no         4.1</span></a>
-<a class="sourceLine" id="cb5-39" title="39"><span class="co">#&gt; 4 02  20   m       ast  ast_post    0 - 35       48    norm        48.0</span></a>
-<a class="sourceLine" id="cb5-40" title="40"><span class="co">#&gt;   auto_norm is_right num_site</span></a>
-<a class="sourceLine" id="cb5-41" title="41"><span class="co">#&gt; 1      norm     TRUE  site 01</span></a>
-<a class="sourceLine" id="cb5-42" title="42"><span class="co">#&gt; 2      &lt;NA&gt;       NA  site 01</span></a>
-<a class="sourceLine" id="cb5-43" title="43"><span class="co">#&gt; 3        no     TRUE  site 02</span></a>
-<a class="sourceLine" id="cb5-44" title="44"><span class="co">#&gt; 4        no    FALSE  site 02</span></a>
-<a class="sourceLine" id="cb5-45" title="45"></a>
-<a class="sourceLine" id="cb5-46" title="46"><span class="co"># you can combine sites, use |</span></a>
-<a class="sourceLine" id="cb5-47" title="47">comb_lab &lt;-<span class="st"> </span><span class="kw">lab</span>(refs_s01, id, age, sex, <span class="st">&quot;norm&quot;</span>, <span class="st">&quot;no&quot;</span>, <span class="dt">site =</span> <span class="st">&quot;site 01|site 02&quot;</span>)</a>
-<a class="sourceLine" id="cb5-48" title="48">comb_labs &lt;-<span class="st"> </span><span class="kw">list</span>(comb_lab)</a>
-<a class="sourceLine" id="cb5-49" title="49"></a>
-<a class="sourceLine" id="cb5-50" title="50">comb_labs &lt;-<span class="st"> </span>comb_labs <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">check_sites</span>(df, site)</a>
-<a class="sourceLine" id="cb5-51" title="51">comb_labs <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">test_sites</span>(<span class="cf">function</span> (lab) <span class="kw">choose_test</span>(lab, <span class="st">&quot;mis&quot;</span>))</a>
-<a class="sourceLine" id="cb5-52" title="52"><span class="co">#&gt;   id age sex human_lab  name_lab    refs lab_vals is_norm vals_to_dbl auto_norm</span></a>
-<a class="sourceLine" id="cb5-53" title="53"><span class="co">#&gt; 1 02  20   m      gluc gluc_post 4 - 5.9      4.1      no         4.1      norm</span></a>
-<a class="sourceLine" id="cb5-54" title="54"><span class="co">#&gt; 2 02  20   m       ast  ast_post  0 - 41       48    norm        48.0        no</span></a>
-<a class="sourceLine" id="cb5-55" title="55"><span class="co">#&gt;          num_site</span></a>
-<a class="sourceLine" id="cb5-56" title="56"><span class="co">#&gt; 1 site 01|site 02</span></a>
-<a class="sourceLine" id="cb5-57" title="57"><span class="co">#&gt; 2 site 01|site 02</span></a></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1"></a>refs_s01 &lt;-<span class="st"> </span><span class="kw">system.file</span>(<span class="st">&quot;labs_refer_s01.xlsx&quot;</span>, <span class="dt">package =</span> <span class="st">&quot;dmtools&quot;</span>)</span>
+<span id="cb4-2"><a href="#cb4-2"></a>refs_s02 &lt;-<span class="st"> </span><span class="kw">system.file</span>(<span class="st">&quot;labs_refer_s02.xlsx&quot;</span>, <span class="dt">package =</span> <span class="st">&quot;dmtools&quot;</span>)</span>
+<span id="cb4-3"><a href="#cb4-3"></a></span>
+<span id="cb4-4"><a href="#cb4-4"></a>s01_lab &lt;-<span class="st"> </span><span class="kw">lab</span>(refs_s01, id, age, sex, <span class="st">&quot;norm&quot;</span>, <span class="st">&quot;no&quot;</span>, <span class="dt">site =</span> <span class="st">&quot;site 01&quot;</span>)</span>
+<span id="cb4-5"><a href="#cb4-5"></a>s02_lab &lt;-<span class="st"> </span><span class="kw">lab</span>(refs_s02, id, age, sex, <span class="st">&quot;norm&quot;</span>, <span class="st">&quot;no&quot;</span>, <span class="dt">site =</span> <span class="st">&quot;site 02&quot;</span>)</span>
+<span id="cb4-6"><a href="#cb4-6"></a></span>
+<span id="cb4-7"><a href="#cb4-7"></a>labs &lt;-<span class="st"> </span><span class="kw">list</span>(s01_lab, s02_lab)</span>
+<span id="cb4-8"><a href="#cb4-8"></a>labs &lt;-<span class="st"> </span>labs <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">check_sites</span>(df, site)</span>
+<span id="cb4-9"><a href="#cb4-9"></a></span>
+<span id="cb4-10"><a href="#cb4-10"></a><span class="co"># mis - analysis, which has an incorrect estimate of the result</span></span>
+<span id="cb4-11"><a href="#cb4-11"></a>labs <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">test_sites</span>(<span class="cf">function</span> (lab) <span class="kw">choose_test</span>(lab, <span class="st">&quot;mis&quot;</span>))</span>
+<span id="cb4-12"><a href="#cb4-12"></a><span class="co">#&gt;   id age sex LBTEST LBTESCD VISIT LBORNRLO LBORNRHI LBORRES LBNRIND</span></span>
+<span id="cb4-13"><a href="#cb4-13"></a><span class="co">#&gt; 1 02  20   m    ast     ast   _v2        0       35      48    norm</span></span>
+<span id="cb4-14"><a href="#cb4-14"></a><span class="co">#&gt;   RES_TYPE_NUM IND_EXPECTED num_site</span></span>
+<span id="cb4-15"><a href="#cb4-15"></a><span class="co">#&gt; 1           48           no  site 02</span></span>
+<span id="cb4-16"><a href="#cb4-16"></a></span>
+<span id="cb4-17"><a href="#cb4-17"></a><span class="co"># ok - analysis, which has a correct estimate of the result</span></span>
+<span id="cb4-18"><a href="#cb4-18"></a>labs <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">test_sites</span>(<span class="cf">function</span> (lab) <span class="kw">choose_test</span>(lab, <span class="st">&quot;ok&quot;</span>)) </span>
+<span id="cb4-19"><a href="#cb4-19"></a><span class="co">#&gt;   id age sex LBTEST LBTESCD VISIT LBORNRLO LBORNRHI LBORRES LBNRIND</span></span>
+<span id="cb4-20"><a href="#cb4-20"></a><span class="co">#&gt; 1 01  19   f   gluc    gluc   _v1      4.0      5.9     5.5    norm</span></span>
+<span id="cb4-21"><a href="#cb4-21"></a><span class="co">#&gt; 2 02  20   m   gluc    gluc   _v1      4.2      6.1     4.1      no</span></span>
+<span id="cb4-22"><a href="#cb4-22"></a><span class="co">#&gt;   RES_TYPE_NUM IND_EXPECTED num_site</span></span>
+<span id="cb4-23"><a href="#cb4-23"></a><span class="co">#&gt; 1          5.5         norm  site 01</span></span>
+<span id="cb4-24"><a href="#cb4-24"></a><span class="co">#&gt; 2          4.1           no  site 02</span></span>
+<span id="cb4-25"><a href="#cb4-25"></a></span>
+<span id="cb4-26"><a href="#cb4-26"></a><span class="co"># skip - analysis, which has an empty value of the estimate</span></span>
+<span id="cb4-27"><a href="#cb4-27"></a>labs <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">test_sites</span>(<span class="cf">function</span> (lab) <span class="kw">choose_test</span>(lab, <span class="st">&quot;skip&quot;</span>))</span>
+<span id="cb4-28"><a href="#cb4-28"></a><span class="co">#&gt;   id age sex LBTEST LBTESCD VISIT LBORNRLO LBORNRHI LBORRES LBNRIND</span></span>
+<span id="cb4-29"><a href="#cb4-29"></a><span class="co">#&gt; 1 01  19   f    ast     ast   _v2        0       43      30    &lt;NA&gt;</span></span>
+<span id="cb4-30"><a href="#cb4-30"></a><span class="co">#&gt;   RES_TYPE_NUM IND_EXPECTED num_site</span></span>
+<span id="cb4-31"><a href="#cb4-31"></a><span class="co">#&gt; 1           30         &lt;NA&gt;  site 01</span></span>
+<span id="cb4-32"><a href="#cb4-32"></a></span>
+<span id="cb4-33"><a href="#cb4-33"></a><span class="co"># all analyzes</span></span>
+<span id="cb4-34"><a href="#cb4-34"></a>labs <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">test_sites</span>(<span class="cf">function</span> (lab) <span class="kw">get_result</span>(lab))</span>
+<span id="cb4-35"><a href="#cb4-35"></a><span class="co">#&gt;   id age sex LBTEST LBTESCD VISIT LBORNRLO LBORNRHI LBORRES LBNRIND</span></span>
+<span id="cb4-36"><a href="#cb4-36"></a><span class="co">#&gt; 1 01  19   f   gluc    gluc   _v1      4.0      5.9     5.5    norm</span></span>
+<span id="cb4-37"><a href="#cb4-37"></a><span class="co">#&gt; 2 01  19   f    ast     ast   _v2      0.0     43.0      30    &lt;NA&gt;</span></span>
+<span id="cb4-38"><a href="#cb4-38"></a><span class="co">#&gt; 3 02  20   m   gluc    gluc   _v1      4.2      6.1     4.1      no</span></span>
+<span id="cb4-39"><a href="#cb4-39"></a><span class="co">#&gt; 4 02  20   m    ast     ast   _v2      0.0     35.0      48    norm</span></span>
+<span id="cb4-40"><a href="#cb4-40"></a><span class="co">#&gt;   RES_TYPE_NUM IND_EXPECTED IS_RIGHT num_site</span></span>
+<span id="cb4-41"><a href="#cb4-41"></a><span class="co">#&gt; 1          5.5         norm     TRUE  site 01</span></span>
+<span id="cb4-42"><a href="#cb4-42"></a><span class="co">#&gt; 2         30.0         &lt;NA&gt;       NA  site 01</span></span>
+<span id="cb4-43"><a href="#cb4-43"></a><span class="co">#&gt; 3          4.1           no     TRUE  site 02</span></span>
+<span id="cb4-44"><a href="#cb4-44"></a><span class="co">#&gt; 4         48.0           no    FALSE  site 02</span></span>
+<span id="cb4-45"><a href="#cb4-45"></a></span>
+<span id="cb4-46"><a href="#cb4-46"></a><span class="co"># you can combine sites, use |</span></span>
+<span id="cb4-47"><a href="#cb4-47"></a>comb_lab &lt;-<span class="st"> </span><span class="kw">lab</span>(refs_s01, id, age, sex, <span class="st">&quot;norm&quot;</span>, <span class="st">&quot;no&quot;</span>, <span class="dt">site =</span> <span class="st">&quot;site 01|site 02&quot;</span>)</span>
+<span id="cb4-48"><a href="#cb4-48"></a>comb_labs &lt;-<span class="st"> </span><span class="kw">list</span>(comb_lab)</span>
+<span id="cb4-49"><a href="#cb4-49"></a></span>
+<span id="cb4-50"><a href="#cb4-50"></a>comb_labs &lt;-<span class="st"> </span>comb_labs <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">check_sites</span>(df, site)</span>
+<span id="cb4-51"><a href="#cb4-51"></a>comb_labs <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">test_sites</span>(<span class="cf">function</span> (lab) <span class="kw">choose_test</span>(lab, <span class="st">&quot;mis&quot;</span>))</span>
+<span id="cb4-52"><a href="#cb4-52"></a><span class="co">#&gt;   id age sex LBTEST LBTESCD VISIT LBORNRLO LBORNRHI LBORRES LBNRIND</span></span>
+<span id="cb4-53"><a href="#cb4-53"></a><span class="co">#&gt; 1 02  20   m   gluc    gluc   _v1        4      5.9     4.1      no</span></span>
+<span id="cb4-54"><a href="#cb4-54"></a><span class="co">#&gt; 2 02  20   m    ast     ast   _v2        0     41.0      48    norm</span></span>
+<span id="cb4-55"><a href="#cb4-55"></a><span class="co">#&gt;   RES_TYPE_NUM IND_EXPECTED        num_site</span></span>
+<span id="cb4-56"><a href="#cb4-56"></a><span class="co">#&gt; 1          4.1         norm site 01|site 02</span></span>
+<span id="cb4-57"><a href="#cb4-57"></a><span class="co">#&gt; 2         48.0           no site 01|site 02</span></span></code></pre></div>
 </div>
 <div id="rename" class="section level3">
 <h3>rename</h3>
 <p>Function to rename the dataset, using crfs.</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" title="1"><span class="kw">rename_dataset</span>(<span class="st">&quot;./crfs&quot;</span>, <span class="st">&quot;old_name&quot;</span>, <span class="st">&quot;new_name&quot;</span>, <span class="dv">2</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1"></a><span class="kw">rename_dataset</span>(<span class="st">&quot;./crfs&quot;</span>, <span class="st">&quot;old_name&quot;</span>, <span class="st">&quot;new_name&quot;</span>, <span class="dv">2</span>)</span></code></pre></div>
 <ul>
 <li>“./crfs” - path to crfs</li>
 <li>“old_name” - variable for names in the dataset, without postfix or prefix</li>

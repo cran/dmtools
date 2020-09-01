@@ -21,15 +21,15 @@ kable(refers, caption = "lab reference ranges")
 id <- c("01", "02", "03")
 age <- c("19", "20", "22")
 sex <- c("f", "m", "m")
-gluc_post <- c("5.5", "4.1", "9.7")
-gluc_res_post <- c("norm", NA, "norm")
-ast_post <- c("30", "48", "31")
-ast_res_post <- c("norm", "norm", "norm")
+gluc_v1 <- c("5.5", "4.1", "9.7")
+gluc_res_v1 <- c("norm", NA, "norm")
+ast_v2 <- c("30", "48", "31")
+ast_res_v2 <- c("norm", "norm", "norm")
 
 df <- data.frame(
   id, age, sex,
-  gluc_post, gluc_res_post,
-  ast_post, ast_res_post,
+  gluc_v1, gluc_res_v1,
+  ast_v2, ast_res_v2,
   stringsAsFactors = F
 )
 
@@ -92,38 +92,6 @@ obj_date %>% choose_test("ok")
 # all dates
 obj_date %>% get_result()
 
-## ----wbcc, echo = FALSE, result = 'asis', warning = F, message = FALSE--------
-wbcc_file <- system.file("wbcc.xlsx", package = "dmtools")
-wbcc <- readxl::read_xlsx(wbcc_file)
-kable(wbcc, caption = "wbcc")
-
-## ----dataset_wbcc, echo = FALSE, result = 'asis'------------------------------
-id <- c("01", "02", "03")
-wbc_post <- c(5.6, 7.8, 8.1)
-lym_rel_post <- c(21, 25, 30)
-lym_abs_post <- c(1.18, 1.95, 2.13)
-
-df <- data.frame(
-  id, wbc_post, lym_rel_post, lym_abs_post,
-  stringsAsFactors = F
-)
-
-kable(df, caption = "dataset")
-
-## ----wbc----------------------------------------------------------------------
-wbcc_file <- system.file("wbcc.xlsx", package = "dmtools")
-wbcc <- wbc(wbcc_file, id)
-wbcc <- wbcc %>% check(df)
-
-# mis - wbc, which has an incorrect calculation
-wbcc %>% choose_test("mis")
-
-# ok - wbc, which has a correct calculation
-wbcc %>% choose_test("ok")
-
-# all WBCs count
-wbcc %>% get_result()
-
 ## ----refer_sites, echo = FALSE, result = 'asis'-------------------------------
 refs_s01 <- system.file("labs_refer_s01.xlsx", package = "dmtools")
 refers_s01 <- readxl::read_xlsx(refs_s01)
@@ -138,15 +106,15 @@ site <- c("site 01", "site 02")
 id <- c("01", "02")
 age <- c("19", "20")
 sex <- c("f", "m")
-gluc_post <- c("5.5", "4.1")
-gluc_res_post <- c("norm", "no")
-ast_post <- c("30", "48")
-ast_res_post <- c(NA, "norm")
+gluc_v1 <- c("5.5", "4.1")
+gluc_res_v1 <- c("norm", "no")
+ast_v2 <- c("30", "48")
+ast_res_v2 <- c(NA, "norm")
 
 df <- data.frame(
   site, id, age, sex,
-  gluc_post, gluc_res_post,
-  ast_post, ast_res_post,
+  gluc_v1, gluc_res_v1,
+  ast_v2, ast_res_v2,
   stringsAsFactors = F
 )
 

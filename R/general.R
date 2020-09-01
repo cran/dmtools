@@ -14,17 +14,17 @@
 #' bio_date_E3 <- c("1991-03-23", "1991-03-16", "1991-03-16")
 #'
 #' df <- data.frame(id, screen_date_E1, rand_date_E2, ph_date_E3, bio_date_E3,
-#' stringsAsFactors = FALSE)
+#'   stringsAsFactors = FALSE
+#' )
 #'
 #' timeline <- system.file("dates.xlsx", package = "dmtools")
 #' obj_date <- date(timeline, id, dplyr::contains)
 #'
 #' obj_date <- check(obj_date, df)
-#'
 check.default <- function(obj, dataset) {
 
   # mutate empty strings in NA
-  dataset <- dataset %>% dplyr::mutate_if(is.character, ~ ifelse(. == "", NA, .))
+  dataset <- dataset %>% dplyr::mutate(dplyr::across(.fns = ~ ifelse(. == "", NA, .)))
 
   # load file
   file <- obj[["file"]]
@@ -71,9 +71,13 @@ find_colnames.default <- function(obj, dataset, row_file) {
   name_find <- ifelse(is_post, paste0("^", name, bond), paste0(bond, name, "$"))
   result_find <- grepl(name_find, dset_colnames)
 
+  if (is.null(name)) {
+    stop("name_to_find is wrong")
+  }
+
   # if not found
   if (!any(result_find)) {
-    warning(row_file$human_name, " not found")
+    warning(name, " not found")
   }
 
   names <- dset_colnames[result_find]
@@ -85,14 +89,19 @@ find_colnames.default <- function(obj, dataset, row_file) {
   do.call(
     rbind,
     lapply(parts, function(part) {
-      run_tests(obj, dataset, row_file, part)
+      tryCatch(run_tests(obj, dataset, row_file, part),
+        error = function(e) {
+          warning(part, " can't bind, because ", e)
+          data.frame()
+        }
+      )
     })
   )
 }
 
 #' Get final result
 #'
-#' @param obj An object. Can be all classes: short, lab, wbc, date.
+#' @param obj An object. Can be all classes: short, lab, date.
 #' @param group_id A logical scalar, default is TRUE.True is grouped by id, otherwise, it isn't grouped.
 #'
 #' @return A data frame. The final result.
@@ -108,19 +117,18 @@ find_colnames.default <- function(obj, dataset, row_file) {
 #' preg_res_e3 <- c("neg", "pos", "unnes")
 #'
 #' df <- data.frame(
-#'  id, site, sex,
-#'  preg_yn_e2, preg_res_e2,
-#'  preg_yn_e3, preg_res_e3,
-#'  stringsAsFactors = FALSE )
+#'   id, site, sex,
+#'   preg_yn_e2, preg_res_e2,
+#'   preg_yn_e3, preg_res_e3,
+#'   stringsAsFactors = FALSE
+#' )
 #'
 #' preg <- system.file("preg.xlsx", package = "dmtools")
-#' obj_short <- short(preg, id, "res", c("site", "sex"))
+#' obj_short <- short(preg, id, "LBORRES", c("site", "sex"))
 #'
 #' obj_short <- check(obj_short, df)
 #' get_result(obj_short)
-#'
 get_result.default <- function(obj, group_id = T) {
-
   result <- obj[["result"]]
 
   if (group_id) {
@@ -166,7 +174,6 @@ get_result.default <- function(obj, group_id = T) {
 #'
 #' labs <- list(s01_lab, s02_lab)
 #' labs <- check_sites(labs, df, site)
-#'
 check_sites <- function(objs, dataset, col_site) {
   col_site <- dplyr::enquo(col_site)
 
@@ -224,7 +231,6 @@ check_sites <- function(objs, dataset, col_site) {
 #' labs <- check_sites(labs, df, site)
 #'
 #' test_sites(labs, func = function(lab) choose_test(lab, "mis"))
-#'
 test_sites <- function(objs, func) {
   result <- do.call(rbind, lapply(
     objs,
@@ -244,11 +250,32 @@ test_sites <- function(objs, func) {
 #' @return A double vector.
 #'
 to_dbl <- function(vals) {
-  if (is.double(vals)) {
+  if (is.numeric(vals)) {
     vals
   } else {
     with_point <- gsub(",", ".", vals)
     rs <- ifelse(grepl("^[0-9.]+$", with_point), with_point, "Inf")
     as.double(rs)
   }
+}
+
+#' Add columns if columns don't exist
+#'
+#' @param dset A data frame. The dataset.
+#' @param ds_part A character scalar. Prefix or postfix.
+#' @param target_cols A character vector with necessary columns.
+#'
+#' @return A data frame. The dataset.
+#
+add_cols <- function(dset, ds_part, target_cols) {
+  part_dset <- dset %>% dplyr::select(dplyr::contains(ds_part))
+  part_cols <- names(part_dset)
+  diff <- dplyr::setdiff(target_cols, part_cols)
+  NAs <- rep(NA, nrow(dset))
+
+  for (col in diff) {
+    dset[col] <- NAs
+  }
+
+  dset
 }

@@ -7,7 +7,7 @@
 get_result(obj, group_id)
 }
 \arguments{
-\item{obj}{An object. Can be all classes: short, lab, wbc, date.}
+\item{obj}{An object. Can be all classes: short, lab, date.}
 
 \item{group_id}{A logical scalar, default is TRUE.True is grouped by id, otherwise, it isn't grouped.}
 }
@@ -27,15 +27,15 @@ preg_yn_e3 <- c("y", "y", "n")
 preg_res_e3 <- c("neg", "pos", "unnes")
 
 df <- data.frame(
- id, site, sex,
- preg_yn_e2, preg_res_e2,
- preg_yn_e3, preg_res_e3,
- stringsAsFactors = FALSE )
+  id, site, sex,
+  preg_yn_e2, preg_res_e2,
+  preg_yn_e3, preg_res_e3,
+  stringsAsFactors = FALSE
+)
 
 preg <- system.file("preg.xlsx", package = "dmtools")
-obj_short <- short(preg, id,"res", c("site", "sex"))
+obj_short <- short(preg, id, "LBORRES", c("site", "sex"))
 
 obj_short <- check(obj_short, df)
 get_result(obj_short)
-
 }
