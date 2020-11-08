@@ -18,18 +18,18 @@ kable(refers, caption = "lab reference ranges")
 
 ## ----dataset, echo = FALSE, result = 'asis'-----------------------------------
 
-id <- c("01", "02", "03")
-age <- c("19", "20", "22")
-sex <- c("f", "m", "m")
-gluc_v1 <- c("5.5", "4.1", "9.7")
-gluc_res_v1 <- c("norm", NA, "norm")
-ast_v2 <- c("30", "48", "31")
-ast_res_v2 <- c("norm", "norm", "norm")
+ID <- c("01", "02", "03")
+AGE <- c("19", "20", "22")
+SEX <- c("f", "m", "m")
+V1_GLUC <- c("5.5", "4.1", "9.7")
+V1_GLUC_IND <- c("norm", NA, "norm")
+V2_AST <- c("30", "48", "31")
+V2_AST_IND <- c("norm", "norm", "norm")
 
 df <- data.frame(
-  id, age, sex,
-  gluc_v1, gluc_res_v1,
-  ast_v2, ast_res_v2,
+  ID, AGE, SEX,
+  V1_GLUC, V1_GLUC_IND,
+  V2_AST, V2_AST_IND,
   stringsAsFactors = F
 )
 
@@ -37,8 +37,9 @@ kable(df, caption = "dataset")
 
 ## ----lab----------------------------------------------------------------------
 # "norm" and "no" it is an example, necessary variable for the estimate, get from the dataset
+# parameter is_post has value FALSE because a dataset has a prefix( V1_ ) in the names of variables
 refs <- system.file("labs_refer.xlsx", package = "dmtools")
-obj_lab <- lab(refs, id, age, sex, "norm", "no")
+obj_lab <- lab(refs, ID, AGE, SEX, "norm", "no", is_post = FALSE)
 obj_lab <- obj_lab %>% check(df)
 
 # ok - analysis, which has a correct estimate of the result
@@ -91,63 +92,6 @@ obj_date %>% choose_test("ok")
 
 # all dates
 obj_date %>% get_result()
-
-## ----refer_sites, echo = FALSE, result = 'asis'-------------------------------
-refs_s01 <- system.file("labs_refer_s01.xlsx", package = "dmtools")
-refers_s01 <- readxl::read_xlsx(refs_s01)
-kable(refers_s01, caption = "lab reference ranges s01")
-
-refs_s02 <- system.file("labs_refer_s02.xlsx", package = "dmtools")
-refers_s02 <- readxl::read_xlsx(refs_s02)
-kable(refers_s02, caption = "lab reference ranges s02")
-
-## ----dataset_sites, echo = FALSE, result = 'asis'-----------------------------
-site <- c("site 01", "site 02")
-id <- c("01", "02")
-age <- c("19", "20")
-sex <- c("f", "m")
-gluc_v1 <- c("5.5", "4.1")
-gluc_res_v1 <- c("norm", "no")
-ast_v2 <- c("30", "48")
-ast_res_v2 <- c(NA, "norm")
-
-df <- data.frame(
-  site, id, age, sex,
-  gluc_v1, gluc_res_v1,
-  ast_v2, ast_res_v2,
-  stringsAsFactors = F
-)
-
-kable(df, caption = "dataset")
-
-## ----sites--------------------------------------------------------------------
-refs_s01 <- system.file("labs_refer_s01.xlsx", package = "dmtools")
-refs_s02 <- system.file("labs_refer_s02.xlsx", package = "dmtools")
-
-s01_lab <- lab(refs_s01, id, age, sex, "norm", "no", site = "site 01")
-s02_lab <- lab(refs_s02, id, age, sex, "norm", "no", site = "site 02")
-
-labs <- list(s01_lab, s02_lab)
-labs <- labs %>% check_sites(df, site)
-
-# mis - analysis, which has an incorrect estimate of the result
-labs %>% test_sites(function (lab) choose_test(lab, "mis"))
-
-# ok - analysis, which has a correct estimate of the result
-labs %>% test_sites(function (lab) choose_test(lab, "ok")) 
-
-# skip - analysis, which has an empty value of the estimate
-labs %>% test_sites(function (lab) choose_test(lab, "skip"))
-
-# all analyzes
-labs %>% test_sites(function (lab) get_result(lab))
-
-# you can combine sites, use |
-comb_lab <- lab(refs_s01, id, age, sex, "norm", "no", site = "site 01|site 02")
-comb_labs <- list(comb_lab)
-
-comb_labs <- comb_labs %>% check_sites(df, site)
-comb_labs %>% test_sites(function (lab) choose_test(lab, "mis"))
 
 ## ----rename, eval = FALSE-----------------------------------------------------
 #  rename_dataset("./crfs", "old_name", "new_name", 2)

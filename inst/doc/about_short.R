@@ -49,21 +49,22 @@ kable(table, caption = "CM")
 ## ----drug_dataset, echo = FALSE, result = 'asis'------------------------------
 
 id <- c("01", "02", "03")
-drug_type_e2 <- c("type_one", "type_two", "type_one")
-drug_amount_e2 <- c(2, 1, 2)
-drug_type_e3 <- c("type_one", "type_two", "type_one")
-drug_amount_e3 <- c(2, 1, 1)
+e2_drug_type <- c("type_one", "type_two", "type_one")
+e2_drug_amount <- c(2, 1, 2)
+e3_drug_type <- c("type_one", "type_two", "type_one")
+e3_drug_amount <- c(2, 1, 1)
 
 df <- data.frame( 
-       id, drug_type_e2, drug_amount_e2,
-       drug_type_e3, drug_amount_e3,
+       id, e2_drug_type, e2_drug_amount,
+       e3_drug_type, e3_drug_amount,
        stringsAsFactors = FALSE)
 
 kable(df, caption = "dataset")
 
 ## ----drug---------------------------------------------------------------------
 drug <- system.file("drug.xlsx", package = "dmtools")
-obj_short <- short(drug, id, "CMTRT")
+# parameter is_post has value FALSE because a dataset has a prefix in the names of variables
+obj_short <- short(drug, id, "CMTRT", is_post = F)
 
 obj_short <- obj_short %>% check(df)
 obj_short %>% get_result()
@@ -76,21 +77,21 @@ kable(table, caption = "VS")
 ## ----vf_dataset, echo = FALSE, result = 'asis'--------------------------------
 
 id <- c("01", "02", "03")
-hr_e2 <- c(60, 70, 76)
-respr_e2 <- c(12, 15, 16)
-hr_e3 <- c(65, 71, 86)
-respr_e3 <- c(13, 14, 18)
+e2_hr <- c(60, 70, 76)
+e2_respr <- c(12, 15, 16)
+e3_hr <- c(65, 71, 86)
+e3_respr <- c(13, 14, 18)
 
 df <- data.frame( 
-       id, hr_e2, respr_e2,
-       hr_e3, respr_e3, 
+       id, e2_hr, e2_respr,
+       e3_hr, e3_respr, 
        stringsAsFactors = FALSE)
 
 kable(df, caption = "dataset")
 
 ## ----vf-----------------------------------------------------------------------
 vf <- system.file("vf.xlsx", package = "dmtools")
-obj_short <- short(vf, id, "VSTEST_HR")
+obj_short <- short(vf, id, "VSTEST_HR", is_post = F)
 
 obj_short <- obj_short %>% check(df)
 obj_short %>% get_result()
